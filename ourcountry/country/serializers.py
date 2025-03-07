@@ -320,11 +320,23 @@ class PopularPlacesDetailSerializer(serializers.ModelSerializer):
 # FOR Hotels
 
 
+class AmenitiesSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Amenities
+        fields = ['id', 'amenity', 'icon']
+
+
+class SafetyAndHygieneSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = SafetyAndHygiene
+        fields = ['id', 'name']
+
+
 class HotelImageSerializers(serializers.ModelSerializer):
     class Meta:
         model = HotelsImage
         fields = ['id', 'image']
-	
+
 
 class HotelsListSerializer(serializers.ModelSerializer):
     avg_rating = serializers.SerializerMethodField()
@@ -362,6 +374,8 @@ class HotelReviewListSerializer(serializers.ModelSerializer):
 class HotelDetailSerializer(serializers.ModelSerializer):
     hotel_image = HotelImageSerializers(read_only=True, many=True)
     hotel_reviews = HotelReviewListSerializer(read_only=True, many=True)
+    amenities = AmenitiesSerializers(read_only=True, many=True)
+    safety_and_hygiene = SafetyAndHygieneSerializers(read_only=True, many=True)
 
     class Meta:
         model = Hotels
@@ -643,11 +657,17 @@ class TicketsSerializers(serializers.ModelSerializer):
         model = Ticket
         fields = ['id', 'concert', 'title', 'image', 'date', 'time', 'address', 'price']
 
+
 class CultureSerializers(serializers.ModelSerializer):
     class Meta:
         model = Culture
         fields = ['id', 'culture_name', 'culture_description', 'culture_image']
 
+
+class CultureKitchenMainListSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = CultureKitchenMain
+        fields = ['id', 'culture', 'title', 'description', 'image_1', 'image_2', 'image_3', 'image_4']
 
 class CultureSimpleSerializers(serializers.ModelSerializer):
     class Meta:

@@ -119,9 +119,20 @@ class HotelsReviewAdmin(admin.ModelAdmin):
 
 admin.site.register(HotelsReview, HotelsReviewAdmin)
 
+
+class AmenitiesInline(TranslationInlineModelAdmin, admin.TabularInline):
+    model = Amenities
+    extra = 1
+
+
+class SafetyAndHygieneInline(TranslationInlineModelAdmin, admin.TabularInline):
+    model = SafetyAndHygiene
+    extra = 1
+
+
 @admin.register(Hotels)
 class HotelsAdmin(TranslationAdmin):
-    inlines = [HotelsImageInlines]
+    inlines = [HotelsImageInlines, AmenitiesInline, SafetyAndHygieneInline]
     class Media:
         js = (
             'http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js',
@@ -218,3 +229,17 @@ class CultureKitchenAdmin(TranslationAdmin):
         css = {
             'screen': ('modeltranslation/css/tabbed_translation_fields.css',),
         }
+
+
+@admin.register(CultureKitchenMain)
+class CultureKitchenMainAdmin(TranslationAdmin):
+    class Media:
+        js = (
+            'http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js',
+            'http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js',
+            'modeltranslation/js/tabbed_translation_fields.js',
+        )
+        css = {
+            'screen': ('modeltranslation/css/tabbed_translation_fields.css',),
+        }
+

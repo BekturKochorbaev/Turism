@@ -315,6 +315,11 @@ class CultureKitchenViewSet(viewsets.ModelViewSet):
     serializer_class = CultureKitchenSerializers
 
 
+class CultureKitchenMainListViewSet(viewsets.ModelViewSet):
+    queryset = CultureKitchenMain.objects.all()
+    serializer_class = CultureKitchenMainListSerializers
+
+
 class GalleryListAPIView(generics.ListAPIView):
     queryset = Gallery.objects.all()
     serializer_class = GallerySerializers

@@ -172,7 +172,7 @@ class PopularPlaces(models.Model):
 
 class Attractions(models.Model):
     attraction_name = models.CharField(max_length=155)
-    description = models.RichTextField(null=True, blank=True)
+    description = models.TextField()
     region_category = models.ForeignKey(Region_Categoty, on_delete=models.CASCADE, null=True, blank=True)#Liliya
     popular_places = models.ForeignKey(PopularPlaces, on_delete=models.CASCADE, related_name='popular_places', null=True, blank=True)#Liliya
     main_image = models.ImageField(upload_to='main_image/', null=True, blank=True)
@@ -380,24 +380,7 @@ class Hotels(models.Model):
     price_medium_period = models.PositiveIntegerField()
     price_long_period = models.PositiveIntegerField()
     longitude = models.CharField(max_length=100, null=True, blank=True, verbose_name='Долгота')
-    latitude = models.CharField(max_length=100, null=True, blank=True, verbose_name='Широта') 
-
-
-    AMENITIES = (
-        ('Kitchen', 'Kitchen'),
-        ('Air Conditioner', 'Air Conditioner'),
-        ("Television with Netflix", 'Television with Netflix'),
-        ('Free Wireless Internet', 'Free Wireless Internet'),
-        ('Balcony or Patio', 'Balcony or Patio')
-    )
-    amenities = MultiSelectField(choices=AMENITIES)
-    SAFETY_AND_HYGIENE = (
-        ('Daily Cleaning', 'Daily Cleaning'),
-        ('Disinfections and Sterilizations', 'Disinfections and Sterilizations'),
-        ("Fire Extinguishers", 'Fire Extinguishers'),
-        ('Smoke Detectors', 'Smoke Detectors'),
-    )
-    safety_and_hygiene = MultiSelectField(choices=SAFETY_AND_HYGIENE)
+    latitude = models.CharField(max_length=100, null=True, blank=True, verbose_name='Широта')
 
     def __str__(self):
         return self.name
@@ -464,6 +447,16 @@ class Hotels(models.Model):
             return ratings.count()
         return 0
 
+
+class Amenities(models.Model):
+    hotel = models.ForeignKey(Hotels, on_delete=models.CASCADE, related_name="amenities")
+    amenity = models.CharField(max_length=55)
+    icon = models.FileField(upload_to='icons/')
+
+
+class SafetyAndHygiene(models.Model):
+    hotel = models.ForeignKey(Hotels, on_delete=models.CASCADE, related_name='safety_and_hygiene')
+    name = models.CharField(max_length=55)
 
 
 class HotelsImage(models.Model):
@@ -873,6 +866,16 @@ class CultureKitchen(models.Model):
 class CultureKitchenImage(models.Model):
     culture_kitchen = models.ForeignKey(CultureKitchen, on_delete=models.CASCADE, related_name='culture_kitchen_image')
     image = models.ImageField(upload_to='culture_kitchen_image/', null=True, blank=True)
+
+
+class CultureKitchenMain(models.Model):
+    title = models.CharField(max_length=100)
+    description = RichTextField()
+    culture = models.ForeignKey(CultureCategory, on_delete=models.CASCADE)
+    image_1 = models.ImageField(upload_to='culture_kitchen_image', null=True, blank=True)
+    image_2 = models.ImageField(upload_to='culture_kitchen_image', null=True, blank=True)
+    image_3 = models.ImageField(upload_to='culture_kitchen_image', null=True, blank=True)
+    image_4 = models.ImageField(upload_to='culture_kitchen_image', null=True, blank=True)
 
 
 # FOR FAVORITE

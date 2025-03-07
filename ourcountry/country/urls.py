@@ -54,6 +54,7 @@ urlpatterns = [
     path('games/', GamesViewSet.as_view({'get': "list"}), name='games_list'),
 
     path('culture_kitchen/', CultureKitchenViewSet.as_view({'get': "list"}), name='culture_kitchen'),
+    path('culture_kitchen_main/', CultureKitchenMainListViewSet.as_view({'get': "list"}), name='culture_kitchen_main'),
 
     path('national_clothes/', NationalClothesViewSet.as_view({'get': "list"}), name='national_clothes_list'),
 
