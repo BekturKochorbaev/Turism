@@ -289,8 +289,12 @@ class AttractionReview(models.Model):
             return like.count()
         return 0
 
+
 class ReplyToAttractionReview(models.Model):
-    review = models.ForeignKey(AttractionReview, on_delete=models.CASCADE, related_name='home_reviews')
+    review = models.ForeignKey(AttractionReview, on_delete=models.CASCADE, related_name='reply_attraction_reviews')
+    comment = models.TextField()
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='client')
+
 
 class PostAttraction(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='user_attractions')

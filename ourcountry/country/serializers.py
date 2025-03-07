@@ -111,6 +111,19 @@ class AttractionReviewCreateSerializer(serializers.ModelSerializer):
 
 #NEW-----------
 
+
+class ReplyToAttractionReviewListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReplyToAttractionReview
+        fields = '__all__'
+
+
+class ReplyToAttractionReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReplyToAttractionReview
+        fields = ['review', 'comment', 'user']
+
+
 class AttractionReviewSerializer(serializers.ModelSerializer):
     attraction_review_image = AttractionsReviewImageSerializers(many=True, read_only=True)
 
@@ -126,6 +139,7 @@ class AttractionsImageSerializers(serializers.ModelSerializer):
     class Meta:
         model = AttractionsImage
         fields = ['id', 'image']
+
 
 
 class AttractionsListSerializer(serializers.ModelSerializer):

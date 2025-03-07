@@ -27,6 +27,8 @@ urlpatterns = [
     path('attraction_review_list/', AttractionReviewListAPIView.as_view(), name='attraction_review_list'),
     path('attraction_review_static/', AttractionReviewStaticListApiView.as_view(), name='attraction_review_static'),
     path('attraction_review_create/', AttractionReviewCreateAPIView.as_view(), name='attraction_review_create'),
+    path('reply_attraction_review/', ReplyToAttractionReviewView.as_view(), name='reply_attraction_review'),
+    path('reply_attraction_review_list/', ReplyToAttractionReviewListView.as_view(), name='reply_attraction_review_list'),
 
     path('popular_places/', PopularPlacesListAPI.as_view(), name='region_popular_places'),
     path('popular_places/<int:pk>/', PopularPlacesDetailAPI.as_view(), name='region_popular_places_detail'),
