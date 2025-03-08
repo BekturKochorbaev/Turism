@@ -25,6 +25,14 @@ class AttractionsReviewImageSerializers(serializers.ModelSerializer):
         fields = ['id', 'image']
 
 
+class ReplyToAttractionReviewListSerializer(serializers.ModelSerializer):
+    user = UserProfileSimpleSerializer(read_only=True)
+
+    class Meta:
+        model = ReplyToAttractionReview
+        fields = ['id', 'user', 'comment']
+
+
 class AttractionReviewListSerializer(serializers.ModelSerializer):
     client = UserProfileSimpleSerializer(read_only=True)
     attractions = serializers.SlugRelatedField(
@@ -33,11 +41,13 @@ class AttractionReviewListSerializer(serializers.ModelSerializer):
     )
     attraction_review_image = AttractionsReviewImageSerializers(read_only=True, many=True)
     count_like = serializers.SerializerMethodField()
+    reply_attraction_reviews = ReplyToAttractionReviewListSerializer(read_only=True, many=True)
 
 
     class Meta:
         model = AttractionReview
-        fields = ['id', 'client', 'attractions', 'comment', 'attraction_review_image', 'count_like']
+        fields = ['id', 'client', 'attractions', 'comment', 'attraction_review_image',
+                  'count_like', 'reply_attraction_reviews']
 
 
     def count_like(self, obj):
@@ -51,6 +61,8 @@ class PostAttractionSerializer(serializers.ModelSerializer):
 
 
 #NEW-----------
+
+
 class AttractionReviewStaticSerializers(serializers.ModelSerializer):
     avg_rating = serializers.SerializerMethodField()
     rating_count = serializers.SerializerMethodField()
@@ -87,8 +99,6 @@ class AttractionReviewStaticSerializers(serializers.ModelSerializer):
         return obj.get_terribly()
 
 
-
-
 class AttractionReviewCreateSerializer(serializers.ModelSerializer):
     images = serializers.ListField(
         child=serializers.ImageField(),
@@ -112,12 +122,6 @@ class AttractionReviewCreateSerializer(serializers.ModelSerializer):
 #NEW-----------
 
 
-class ReplyToAttractionReviewListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ReplyToAttractionReview
-        fields = '__all__'
-
-
 class ReplyToAttractionReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReplyToAttractionReview
@@ -130,16 +134,13 @@ class AttractionReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = AttractionReview
         fields = ['id', 'client', 'attractions', 'comment', 'rating', 'created_date',
-                  'attraction_review_image']
-
-
+                  'attraction_review_image', ]
 
 
 class AttractionsImageSerializers(serializers.ModelSerializer):
     class Meta:
         model = AttractionsImage
         fields = ['id', 'image']
-
 
 
 class AttractionsListSerializer(serializers.ModelSerializer):
@@ -164,16 +165,16 @@ class AttractionsListSerializer(serializers.ModelSerializer):
         return obj.get_rating_count()
 
 
-
 class AttractionsDetailSerializer(serializers.ModelSerializer):
     rating_count = serializers.SerializerMethodField()
     image = AttractionsImageSerializers(read_only=True, many=True)
     rank = serializers.SerializerMethodField()
-
+    attractions_review = AttractionReviewListSerializer(read_only=True, many=True)
 
     class Meta:
         model = Attractions
-        fields = ['id', 'attraction_name', "main_image", 'image', 'description', 'type_attraction', 'rating_count', 'rank']
+        fields = ['id', 'attraction_name', "main_image", 'image', 'description', 'type_attraction',
+                  'rating_count', 'rank', 'attractions_review']
 
 
     def get_rating_count(self, obj):
@@ -213,6 +214,7 @@ class PopularPlacesListSerializer(serializers.ModelSerializer):
 
 #NEW---------------------
 
+
 class PopularPlacesStaticSerializer(serializers.ModelSerializer):
     avg_rating = serializers.SerializerMethodField()
     rating_count = serializers.SerializerMethodField()
@@ -249,6 +251,10 @@ class PopularPlacesStaticSerializer(serializers.ModelSerializer):
         return obj.get_terribly()
 
 
+class ReplyToPopularPlacesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReplyToPopularReview
+        fields = ['review', 'comment', 'user']
 
 
 #NEW---------------------
@@ -282,14 +288,23 @@ class RegionSerializer(serializers.ModelSerializer):
         fields = ['id', 'region_name', 'region_image', 'region_description', 'What_to_try', 'popular_places', 'region_category']
 
 
+class ReplyToPopularPlacesListSerializer(serializers.ModelSerializer):
+    user = UserProfileSimpleSerializer(read_only=True)
+
+    class Meta:
+        model = ReplyToAttractionReview
+        fields = ['id', 'user', 'comment']
+
+
 class PopularReviewListSerializer(serializers.ModelSerializer):
     client = UserProfileSimpleSerializer(read_only=True)
     review_image = ReviewImageSerializer(read_only=True, many=True)
     count_like = serializers.SerializerMethodField()
+    reply_popular_places = ReplyToPopularPlacesListSerializer(read_only=True, many=True)
 
     class Meta:
         model = PopularReview
-        fields = ['id', 'client', 'created_date', 'comment', 'review_image', 'count_like']
+        fields = ['id', 'client', 'created_date', 'comment', 'review_image', 'count_like', 'reply_popular_places']
 
     def count_like(self, obj):
         return obj.count_like()
@@ -301,6 +316,7 @@ class PostPopularSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 #NEW-----------
+
 
 class PopularReviewCreateSerializer(serializers.ModelSerializer):
     images = serializers.ListField(
@@ -323,6 +339,7 @@ class PopularReviewCreateSerializer(serializers.ModelSerializer):
         return popular_review
 
 #NEW-----------
+
 
 class PopularPlacesDetailSerializer(serializers.ModelSerializer):
     popular_reviews = PopularReviewListSerializer(read_only=True, many=True)
@@ -372,14 +389,23 @@ class HotelsListSerializer(serializers.ModelSerializer):
         return obj.get_rating_count()
 
 
+class ReplyToHotelReviewListSerializer(serializers.ModelSerializer):
+    user = UserProfileSimpleSerializer(read_only=True)
+
+    class Meta:
+        model = ReplyToHotelReview
+        fields = ['id', 'user', 'comment']
+
+
 class HotelReviewListSerializer(serializers.ModelSerializer):
-    client_hotel = UserProfileSimpleSerializer(read_only=True)
+    client = UserProfileSimpleSerializer(read_only=True)
     hotel_review_image = HotelImageSerializers(read_only=True, many=True)
     count_like =serializers.SerializerMethodField()
+    reply_hotel_reviews = ReplyToHotelReviewListSerializer(read_only=True, many=True)
 
     class Meta:
         model = HotelsReview
-        fields = ['id', 'client_hotel', 'hotel', 'comment', 'hotel_review_image', 'count_like']
+        fields = ['id', 'client', 'hotel', 'comment', 'hotel_review_image', 'count_like', 'reply_hotel_reviews']
 
     def count_like(self, obj):
         return obj.count_like()
@@ -396,6 +422,11 @@ class HotelDetailSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'hotel_image', 'address', 'description', 'bedroom', 'bathroom', 'cars', 'bikes',
                   'pets', 'amenities', 'safety_and_hygiene', 'price_short_period', 'price_medium_period', 'price_long_period', 'hotel_reviews']
 
+
+class ReplyToHotelReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReplyToHotelReview
+        fields = ['review', 'comment', 'user']
 
 
 class PostHotelSerializer(serializers.ModelSerializer):
@@ -421,7 +452,7 @@ class HotelsReviewCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = HotelsReview
-        fields = ['client_hotel', 'comment', 'hotel', 'rating', "images"]
+        fields = ['client', 'comment', 'hotel', 'rating', "images"]
 
     def create(self, validated_data):
         images = validated_data.pop('images', [])
@@ -434,6 +465,7 @@ class HotelsReviewCreateSerializer(serializers.ModelSerializer):
 
 #NEW-----------
 
+
 class HotelsReviewSerializer(serializers.ModelSerializer):
     client_hotel = UserProfileSimpleSerializer(read_only=True)
     hotel = serializers.SlugRelatedField(
@@ -445,6 +477,7 @@ class HotelsReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = HotelsReview
         fields = '__all__'
+
 
 class HotelReviewStaticSerializers(serializers.ModelSerializer):
     avg_rating = serializers.SerializerMethodField()
@@ -527,22 +560,32 @@ class KitchenReviewImageSerializer(serializers.ModelSerializer):
         fields = ['id', 'image']
 
 
+class ReplyToKitchenReviewListSerializer(serializers.ModelSerializer):
+    user = UserProfileSimpleSerializer(read_only=True)
+
+    class Meta:
+        model = ReplyToKitchenReview
+        fields = ['id', 'user', 'comment']
+
+
 class KitchenReviewListSerializer(serializers.ModelSerializer):
-    client_kitchen = UserProfileSimpleSerializer(read_only=True)
+    client = UserProfileSimpleSerializer(read_only=True)
     kitchen_region = serializers.SlugRelatedField(
         queryset=Kitchen.objects.all(),
         slug_field='kitchen_name'
     )
     kitchen_review_image = KitchenReviewImageSerializer(read_only=True, many=True)
     count_like = serializers.SerializerMethodField()
+    reply_kitchen_reviews = ReplyToKitchenReviewListSerializer(read_only=True, many=True)
 
     class Meta:
         model = KitchenReview
-        fields = ['id', 'client_kitchen', 'kitchen_region', 'comment',
-                  'created_at', 'kitchen_review_image', 'count_like']
+        fields = ['id', 'client', 'kitchen_region', 'comment',
+                  'created_at', 'kitchen_review_image', 'count_like', 'reply_kitchen_reviews']
 
     def count_like(self, obj):
         return obj.count_like()
+
 
 class KitchenDetailSerializers(serializers.ModelSerializer):
     average_rating = serializers.SerializerMethodField()
@@ -580,6 +623,12 @@ class KitchenDetailSerializers(serializers.ModelSerializer):
         return obj.get_atmosphere_rating()
 
 
+class ReplyToKitchenReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReplyToKitchenReview
+        fields = ['review', 'comment', 'user']
+
+
 class PostKitchenSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostKitchen
@@ -597,7 +646,7 @@ class KitchenReviewCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = KitchenReview
-        fields = ['client_kitchen', 'kitchen_region', 'comment', 'rating',
+        fields = ['client', 'kitchen_region', 'comment', 'rating',
                   'nutrition_rating', 'service_rating', 'price_rating', 'atmosphere_rating', 'images']
 
     def create(self, validated_data):
@@ -608,6 +657,7 @@ class KitchenReviewCreateSerializer(serializers.ModelSerializer):
             KitchenReviewImage.objects.create(review=kitchen_review_create, image=image)
 
         return kitchen_review_create
+
 
 class KitchenReviewStaticSerializers(serializers.ModelSerializer):
     average_rating = serializers.SerializerMethodField()
@@ -683,6 +733,7 @@ class CultureKitchenMainListSerializers(serializers.ModelSerializer):
         model = CultureKitchenMain
         fields = ['id', 'culture', 'title', 'description', 'image_1', 'image_2', 'image_3', 'image_4']
 
+
 class CultureSimpleSerializers(serializers.ModelSerializer):
     class Meta:
         model = CultureCategory
@@ -713,7 +764,6 @@ class HandCraftsSerializers(serializers.ModelSerializer):
 
 #FOR CURRENCY
 
-
 class Currency_DescriptionSerializers(serializers.ModelSerializer):
     class Meta:
         model = Currency_Description
@@ -735,7 +785,6 @@ class CurrencySerializers(serializers.ModelSerializer):
     class Meta:
         model = Currency
         fields = ['id',  "culture", 'currency_name', 'currency_description', 'currency_image']
-
 
 
 class NationalInstrumentsSerializers(serializers.ModelSerializer):
@@ -772,7 +821,7 @@ class GalleryReviewCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GalleryReview
-        fields = ['id', 'client_gallery', 'comment', 'gallery', 'rating', 'images']
+        fields = ['id', 'client', 'comment', 'gallery', 'rating', 'images']
 
 
     def create(self, validated_data):
@@ -783,6 +832,12 @@ class GalleryReviewCreateSerializer(serializers.ModelSerializer):
             GalleryReviewImage.objects.create(gallery=gallery_review_create, image=image)
 
         return gallery_review_create
+
+
+class ReplyToGalleryReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReplyToGalleryReview
+        fields = ['review', 'comment', 'user']
 
 
 class PostGallerySerializer(serializers.ModelSerializer):
@@ -859,22 +914,31 @@ class KitchenReviewSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class ReplyToGalleryReviewListSerializer(serializers.ModelSerializer):
+    user = UserProfileSimpleSerializer(read_only=True)
+
+    class Meta:
+        model = ReplyToGalleryReview
+        fields = ['id', 'user', 'comment']
+
+
 class GalleryReviewSerializer(serializers.ModelSerializer):
-    client_gallery = UserProfileSimpleSerializer(read_only=True)
+    client = UserProfileSimpleSerializer(read_only=True)
     gallery = serializers.SlugRelatedField(
         queryset=Gallery.objects.all(),
         slug_field='gallery_name'
     )
     gallery_review_image = GalleryReviewImageSerializers(read_only=True, many=True)
     count_like = serializers.SerializerMethodField()
+    reply_gallery_reviews = ReplyToGalleryReviewListSerializer(read_only=True, many=True)
 
     class Meta:
         model = GalleryReview
-        fields = ['id', 'client_gallery', 'comment', 'gallery', 'rating', 'count_like', 'gallery_review_image', 'created_date']
+        fields = ['id', 'client', 'comment', 'gallery', 'rating', 'count_like', 'gallery_review_image',
+                  'created_date', 'reply_gallery_reviews']
 
     def count_like(self, obj):
         return obj.count_like()
-
 
 
 class FavoriteItemSerializers(serializers.ModelSerializer):
@@ -894,3 +958,5 @@ class FavoriteSerializers(serializers.ModelSerializer):
     class Meta:
         model = FavoriteItem
         fields = ['user', 'items']
+
+

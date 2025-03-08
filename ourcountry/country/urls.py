@@ -28,25 +28,27 @@ urlpatterns = [
     path('attraction_review_static/', AttractionReviewStaticListApiView.as_view(), name='attraction_review_static'),
     path('attraction_review_create/', AttractionReviewCreateAPIView.as_view(), name='attraction_review_create'),
     path('reply_attraction_review/', ReplyToAttractionReviewView.as_view(), name='reply_attraction_review'),
-    path('reply_attraction_review_list/', ReplyToAttractionReviewListView.as_view(), name='reply_attraction_review_list'),
 
     path('popular_places/', PopularPlacesListAPI.as_view(), name='region_popular_places'),
     path('popular_places/<int:pk>/', PopularPlacesDetailAPI.as_view(), name='region_popular_places_detail'),
     path('popular_places_review/', PopularReviewListAPIView.as_view(), name='popular_places_review'),
     path('popular_places_static/', PopularPlacesStaticAPIView.as_view(), name='popular_places_static'),
     path('popular_places_review_create/', PopularReviewCreateAPIView.as_view(), name='popular_places_review_create'),
+    path('reply_popular_places/', ReplyToPopularPlacesCreateView.as_view(), name='reply_popular_places'),
 
     path('hotels/', HotelsListAPIView.as_view(), name='hotels_list'),
     path('hotels/<int:pk>/', HotelsDetailAPIView.as_view(), name='hotel_detail'),
     path('hotels_review_list/', HotelsReviewListAPIView.as_view(), name='hotels_review_list'),
     path('hotels_review_static/', HotelsReviewStaticListAPIView.as_view(), name='hotels_review_static'),
     path('hotels_review_create/', HotelReviewCreateAPiView.as_view(), name='hotels_review_create'),
+    path('reply_hotel_reviews/', ReplyToHotelReviewView.as_view(), name='reply_hotel_reviews'),
 
     path('kitchen/', KitchenListView.as_view(), name='kitchen_list'),
     path('kitchen/<int:pk>/', KitchenDetailView.as_view(), name='kitchen_detail'),
     path('kitchen_review_create/', KitchenReviewCreateAPIView.as_view(), name='kitchen_review_create'),
     path('kitchen_review_list/', KitchenReviewListAPIView.as_view(), name='kitchen_review_list'),
     path('kitchen_review_static/', KitchenReviewStaticAPIView.as_view(), name='kitchen_review_static'),
+    path('reply_kitchen_reviews/', ReplyToKitchenReviewView.as_view(), name='reply_kitchen_reviews'),
 
     path('event/', EventListAPiView.as_view(), name='event'),
     path('only_tickets/', TicketListAPIView.as_view(), name='only_tickets'),
@@ -69,6 +71,7 @@ urlpatterns = [
     path('gallery/', GalleryListAPIView.as_view(), name='gallery'),
     path('gallery_review_create/', GalleryReviewCreateAPIView.as_view(), name='gallery_review_create'),
     path('gallery_review_list/', GalleryReviewListAPIView.as_view(), name='gallery_review_list'),
+    path('reply_gallery_reviews/', ReplyToGalleryReviewView.as_view(), name='gallery_review_list'),
 
     path('favorite/', FavoriteItemViewSet.as_view({'get': 'list'}), name='favorite'),
 

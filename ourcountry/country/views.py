@@ -1,6 +1,8 @@
 import email
 
 from django.shortcuts import render
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
@@ -70,8 +72,24 @@ class AttractionsDetailAPIView(generics.RetrieveAPIView):
     queryset = Attractions.objects.all()
     serializer_class = AttractionsDetailSerializer
 
-class PostAttractionCreateAPIView(generics.CreateAPIView):
-    serializer_class = PostAttractionSerializer
+
+class PostAttractionCreateAPIView(APIView):
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'user': openapi.Schema(type=openapi.TYPE_INTEGER, description='user'),
+                'post': openapi.Schema(type=openapi.TYPE_INTEGER, description='post'),
+                'like': openapi.Schema(type=openapi.TYPE_BOOLEAN, description='like'),
+            },
+            required=['user']
+        ),
+    )
+    def patch(self, request, *args, **kwargs):
+        serializer = PostAttractionSerializer(data=request.data)
+        if serializer.is_valid():
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class AttractionReviewListAPIView(generics.ListAPIView):
@@ -86,6 +104,7 @@ class AttractionReviewStaticListApiView(generics.ListAPIView):
     serializer_class = AttractionReviewStaticSerializers
 
 #NEW-----------
+
 
 class AttractionReviewCreateAPIView(generics.CreateAPIView):
     queryset = AttractionReview.objects.all()
@@ -104,17 +123,6 @@ class ReplyToAttractionReviewView(generics.CreateAPIView):
     queryset = ReplyToAttractionReview.objects.all()
     serializer_class = ReplyToAttractionReviewSerializer
 
-
-class ReplyToAttractionReviewListView(generics.ListAPIView):
-    queryset = ReplyToAttractionReview.objects.all()
-    serializer_class = ReplyToAttractionReviewListSerializer
-
-
-
-#NEW-----------
-
-
-
 # FOR REGIONS
 
 
@@ -123,9 +131,23 @@ class RegionListAPIView(generics.ListAPIView):
     serializer_class = RegionSerializer
 
 
-
-class PostPopularPlacesCreateApiView(generics.CreateAPIView):
-    serializer_class = PostPopularSerializer
+class PostPopularPlacesCreateApiView(APIView):
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'user': openapi.Schema(type=openapi.TYPE_INTEGER, description='user'),
+                'post': openapi.Schema(type=openapi.TYPE_INTEGER, description='post'),
+                'like': openapi.Schema(type=openapi.TYPE_BOOLEAN, description='like'),
+            },
+            required=['user']
+        ),
+    )
+    def patch(self, request, *args, **kwargs):
+        serializer = PostPopularSerializer(data=request.data)
+        if serializer.is_valid():
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PopularPlacesListAPI(generics.ListAPIView):
@@ -151,7 +173,6 @@ class PopularPlacesStaticAPIView(generics.ListAPIView):
     serializer_class = PopularPlacesStaticSerializer
 
 
-
 class PopularReviewCreateAPIView(generics.CreateAPIView):
     queryset = PopularReview.objects.all()
     serializer_class = PopularReviewCreateSerializer
@@ -164,29 +185,47 @@ class PopularReviewCreateAPIView(generics.CreateAPIView):
             return Response(response_serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class ReplyToPopularPlacesCreateView(generics.CreateAPIView):
+    queryset = ReplyToPopularReview.objects.all()
+    serializer_class = ReplyToPopularPlacesSerializer
+
 #NEW-----------
+
 
 class ToTryViewSet(viewsets.ModelViewSet):
     queryset = ToTry.objects.all()
     serializer_class = ToTrySerializer
 
 
-
-class PostHotelCreateAPIView(generics.CreateAPIView):
-    serializer_class = PostHotelSerializer
-
+class PostHotelCreateAPIView(APIView):
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'user': openapi.Schema(type=openapi.TYPE_INTEGER, description='user'),
+                'post': openapi.Schema(type=openapi.TYPE_INTEGER, description='post'),
+                'like': openapi.Schema(type=openapi.TYPE_BOOLEAN, description='like'),
+            },
+            required=['user']
+        ),
+    )
+    def patch(self, request, *args, **kwargs):
+        serializer = PostHotelSerializer(data=request.data)
+        if serializer.is_valid():
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class HotelsListAPIView(generics.ListAPIView):
     serializer_class = HotelsListSerializer
 
     def get_queryset(self):
-        # Аннотируем отели средним рейтингом
         queryset = Hotels.objects.annotate(
             average_rating=Avg('hotel_reviews__rating'),  # Вычисляем средний рейтинг
             is_popular=Case(
                 When(average_rating__gte=4, then=Value(1)),  # Если рейтинг >= 4, помечаем как популярный
-                default=Value(0),  # В противном случае, помечаем как непопулярный
+                default=Value(0),
                 output_field=IntegerField(),
             )
         ).order_by('-is_popular', '-average_rating')  # Сортируем сначала по популярности, затем по рейтингу
@@ -206,7 +245,6 @@ class HotelsReviewListAPIView(generics.ListAPIView):
     filterset_class = HotelsReviewFilter
 
 
-
 class HotelReviewCreateAPiView(generics.CreateAPIView):
     queryset = HotelsReview.objects.all()
     serializer_class = HotelsReviewCreateSerializer
@@ -223,6 +261,13 @@ class HotelReviewCreateAPiView(generics.CreateAPIView):
 class HotelsReviewStaticListAPIView(generics.ListAPIView):
     queryset = Hotels.objects.all()
     serializer_class = HotelReviewStaticSerializers
+
+
+class ReplyToHotelReviewView(generics.CreateAPIView):
+    queryset = ReplyToHotelReview.objects.all()
+    serializer_class = ReplyToHotelReviewSerializer
+
+
 # for kitchen
 
 class KitchenListView(generics.ListAPIView):
@@ -246,9 +291,24 @@ class KitchenDetailView(generics.RetrieveAPIView):
     queryset = Kitchen.objects.all()
     serializer_class = KitchenDetailSerializers
 
-class PostKitchenCreateAPIView(generics.CreateAPIView):
-    serializer_class = PostKitchenSerializer
 
+class PostKitchenCreateAPIView(APIView):
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'user': openapi.Schema(type=openapi.TYPE_INTEGER, description='user'),
+                'post': openapi.Schema(type=openapi.TYPE_INTEGER, description='post'),
+                'like': openapi.Schema(type=openapi.TYPE_BOOLEAN, description='like'),
+            },
+            required=['user']
+        ),
+    )
+    def patch(self, request, *args, **kwargs):
+        serializer = PostKitchenSerializer(data=request.data)
+        if serializer.is_valid():
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 #NEW-----------
@@ -267,6 +327,7 @@ class KitchenReviewCreateAPIView(generics.CreateAPIView):
 
 #NEW-----------
 
+
 class KitchenReviewListAPIView(generics.ListAPIView):
     queryset = KitchenReview.objects.all()
     serializer_class = KitchenReviewListSerializer
@@ -278,6 +339,10 @@ class KitchenReviewStaticAPIView(generics.ListAPIView):
     queryset = Kitchen.objects.all()
     serializer_class = KitchenReviewStaticSerializers
 
+
+class ReplyToKitchenReviewView(generics.CreateAPIView):
+    queryset = ReplyToKitchenReview.objects.all()
+    serializer_class = ReplyToKitchenReviewSerializer
 
 
 class EventListAPiView(generics.ListAPIView):
@@ -291,6 +356,7 @@ class EventListAPiView(generics.ListAPIView):
 class TicketListAPIView(generics.ListAPIView):
     queryset = Ticket.objects.all()
     serializer_class = TicketsSerializers
+
 
 class CultureListAPiView(generics.ListAPIView):
     queryset = Culture.objects.all()
@@ -336,13 +402,31 @@ class GalleryListAPIView(generics.ListAPIView):
     queryset = Gallery.objects.all()
     serializer_class = GallerySerializers
 
-class PostGalleryCreateAPIView(generics.CreateAPIView):
-    serializer_class = PostGallerySerializer
+
+class ReplyToGalleryReviewView(generics.CreateAPIView):
+    queryset = ReplyToGalleryReview.objects.all()
+    serializer_class = ReplyToGalleryReviewSerializer
 
 
+class PostGalleryCreateAPIView(APIView):
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'user': openapi.Schema(type=openapi.TYPE_INTEGER, description='user'),
+                'post': openapi.Schema(type=openapi.TYPE_INTEGER, description='post'),
+                'like': openapi.Schema(type=openapi.TYPE_BOOLEAN, description='like'),
+            },
+            required=['user']
+        ),
+    )
+    def patch(self, request, *args, **kwargs):
+        serializer = PostGallerySerializer(data=request.data)
+        if serializer.is_valid():
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# NEW-----------
 
 class GalleryReviewCreateAPIView(generics.CreateAPIView):
     queryset = GalleryReview.objects.all()
@@ -362,6 +446,7 @@ class GalleryReviewListAPIView(generics.ListAPIView):
     serializer_class = GalleryReviewSerializer
 
 # NEW-----------
+
 
 class FavoriteItemViewSet(viewsets.ModelViewSet):
     serializer_class = FavoriteSerializers

@@ -181,16 +181,8 @@ class KitchenAdmin(TranslationAdmin):
         }
 
 
-class EventInlines(admin.TabularInline):
-    model = Event
-    extra = 1
-
-
-class EventCategoriesAdmin(admin.ModelAdmin):
-    inlines = [EventInlines]
-
-
-admin.site.register(EventCategories, EventCategoriesAdmin)
+admin.site.register(EventCategories)
+admin.site.register(Event)
 admin.site.register(UserProfile)
 admin.site.register(CultureCategory)
 admin.site.register(Favorite)
