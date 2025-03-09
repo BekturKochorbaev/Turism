@@ -709,7 +709,7 @@ class EventSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = Event
-        fields = ['id', 'title', 'image', 'category', 'date', 'time', 'address', 'price']
+        fields = ['id', 'title', 'image', 'category', 'date', 'time', 'address', 'price', 'popular_places', 'ticket']
 
 
 class TicketsSerializers(serializers.ModelSerializer):
@@ -874,7 +874,7 @@ class GallerySerializers(serializers.ModelSerializer):
 # FOR USER_HISTORY_REVIEW
 
 class AttractionReviewSerializer(serializers.ModelSerializer):
-    client_home = UserProfileSimpleSerializer(read_only=True)
+    client = UserProfileSimpleSerializer(read_only=True)
     attractions = serializers.SlugRelatedField(
         queryset=Attractions.objects.all(),
         slug_field='attraction_name'

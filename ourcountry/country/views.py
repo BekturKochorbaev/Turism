@@ -46,7 +46,6 @@ class UserAPIView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 class UserProfileListAPIView(generics.ListAPIView):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
@@ -97,6 +96,11 @@ class AttractionReviewListAPIView(generics.ListAPIView):
     serializer_class = AttractionReviewListSerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = AttractionReviewFilter
+
+
+class AttractionReviewDetailAPIView(generics.RetrieveAPIView):
+    queryset = AttractionReview.objects.all()
+    serializer_class = AttractionReviewListSerializer
 
 
 class AttractionReviewStaticListApiView(generics.ListAPIView):
@@ -166,6 +170,10 @@ class PopularReviewListAPIView(generics.ListAPIView):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = PopularReviewFilter
 
+
+class PopularReviewDetailAPIView(generics.RetrieveAPIView):
+    queryset = PopularReview.objects.all()
+    serializer_class = PopularReviewListSerializer
 
 #NEW-----------
 class PopularPlacesStaticAPIView(generics.ListAPIView):
@@ -243,6 +251,11 @@ class HotelsReviewListAPIView(generics.ListAPIView):
     serializer_class = HotelReviewListSerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = HotelsReviewFilter
+
+
+class HotelsReviewDetailAPIView(generics.RetrieveAPIView):
+    queryset = HotelsReview.objects.all()
+    serializer_class = HotelReviewListSerializer
 
 
 class HotelReviewCreateAPiView(generics.CreateAPIView):
@@ -333,6 +346,11 @@ class KitchenReviewListAPIView(generics.ListAPIView):
     serializer_class = KitchenReviewListSerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = KitchenReviewFilter
+
+
+class KitchenReviewDetailAPIView(generics.RetrieveAPIView):
+    queryset = KitchenReview.objects.all()
+    serializer_class = KitchenReviewListSerializer
 
 
 class KitchenReviewStaticAPIView(generics.ListAPIView):
@@ -445,6 +463,10 @@ class GalleryReviewListAPIView(generics.ListAPIView):
     queryset = GalleryReview.objects.all()
     serializer_class = GalleryReviewSerializer
 
+
+class GalleryReviewDetailAPIView(generics.RetrieveAPIView):
+    queryset = GalleryReview.objects.all()
+    serializer_class = GalleryReviewSerializer
 # NEW-----------
 
 
@@ -464,7 +486,7 @@ class FavoriteItemViewSet(viewsets.ModelViewSet):
     serializer_class = FavoriteItemSerializers
 
     def get_queryset(self):
-        return FavoriteItem.objects.filter(favorite__user=self.request.user)
+        return FavoriteItem.objects.filter(favorite__user__id=self.request.user.id)
 
     def perform_create(self, serializer):
         cart, created = Favorite.objects.get_or_create(user=self.request.user)

@@ -157,6 +157,6 @@ class EventFilter(filters.FilterSet):
 
     class Meta:
         model = Event
-        fields = ['category', 'date']
+        fields = ['category', 'date', 'ticket']
 
 

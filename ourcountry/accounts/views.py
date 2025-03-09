@@ -148,12 +148,11 @@ class UserCommentsHistoryAPIView(APIView):
     def get(self, request, *args, **kwargs):
         user = request.user  # Предполагается, что у пользователя есть профиль UserProfile
         try:
-            attraction = AttractionReview.objects.filter(client_home=user)
+            attraction = AttractionReview.objects.filter(client=user)
             popular_review = PopularReview.objects.filter(client=user)
-            # region_review = RegionReview.objects.filter(user_name=user)
-            hotel_review = HotelsReview.objects.filter(client_hotel=user)
-            kitchen_review = KitchenReview.objects.filter(client_kitchen=user)
-            gallery_review = GalleryReview.objects.filter(client_gallery=user)
+            hotel_review = HotelsReview.objects.filter(client=user)
+            kitchen_review = KitchenReview.objects.filter(client=user)
+            gallery_review = GalleryReview.objects.filter(client=user)
 
             serialized_attraction_review = AttractionReviewSerializer(attraction, many=True).data
             serialized_popular_review = PopularReviewSerializer(popular_review, many=True).data

@@ -281,7 +281,7 @@ class AttractionReview(models.Model):
 
 
     def __str__(self):
-        return f'{self.client_home}'
+        return f'{self.client}'
 
     def count_like(self):
         like = self.post.all()
@@ -351,7 +351,7 @@ class PostPopular(models.Model):
         unique_together = ('user', 'post')
 
     def __str__(self):
-        return f'{self.user_popular} - {self.post_popular}'
+        return f'{self.user} - {self.post}'
 
 
 class ReviewImage(models.Model):
@@ -489,7 +489,7 @@ class HotelsReview(models.Model):
 
 
     def __str__(self):
-        return f'{self.client_hotel}'
+        return f'{self.client}'
 
 
 class ReplyToHotelReview(models.Model):
@@ -508,7 +508,7 @@ class PostHotel(models.Model):
         unique_together = ('user', 'post')
 
     def __str__(self):
-        return f'{self.user_hotel} - {self.post_hotel}'
+        return f'{self.user} - {self.post}'
 
 
 class HotelsReviewImage(models.Model):
@@ -673,7 +673,7 @@ class KitchenReview(models.Model):
 
 
     def __str__(self):
-        return f'{self.client_kitchen}'
+        return f'{self.client}'
 
     def count_like(self):
         like = self.post_kitchen.all()
@@ -698,7 +698,7 @@ class PostKitchen(models.Model):
         unique_together = ('user', 'post')
 
     def __str__(self):
-        return f'{self.user_kitchen} - {self.post_kitchen}'
+        return f'{self.user} - {self.post}'
 
 
 class KitchenReviewImage(models.Model):
@@ -729,6 +729,7 @@ class EventCategories(models.Model):
 class Event(models.Model):
     category = models.ForeignKey(EventCategories, on_delete=models.CASCADE, related_name='event_category')
     image = models.ImageField(upload_to='event_images/', null=True, blank=True)
+    popular_places = models.ForeignKey(PopularPlaces, on_delete=models.CharField, null=True, blank=True)
     title = models.CharField(max_length=52)
     date = models.DateField()
     time = models.TimeField()
@@ -785,7 +786,7 @@ class GalleryReview(models.Model):
     created_date = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.client_gallery}'
+        return f'{self.client}'
 
     def count_like(self):
         like = self.post_gallery.all()
@@ -810,7 +811,7 @@ class PostGallery(models.Model):
         unique_together = ('user', 'post')
 
     def __str__(self):
-        return f'{self.user_gallery} - {self.post_gallery}'
+        return f'{self.user} - {self.post}'
 
 
 class GalleryReviewImage(models.Model):
@@ -819,18 +820,26 @@ class GalleryReviewImage(models.Model):
 
 # FOR CULTURE
 
-
-class Culture(models.Model):
-    culture_name = models.CharField(max_length=35)
-    culture_description = models.TextField()
-    culture_image = models.ImageField(upload_to='culture-images')
+class CultureCategory(models.Model):
+    CATEGORIES = (
+        ("Games", "Games"),
+        ("National clothes", "National clothes"),
+        ("Hand crafts", "Hand crafts"),
+        ("Currency", "Currency"),
+        ("National instruments", "National instruments"),
+        ("Kitchen", "Kitchen"),
+    )
+    culture_name = models.CharField(max_length=35, choices=CATEGORIES)
 
     def __str__(self):
         return self.culture_name
 
 
-class CultureCategory(models.Model):
+class Culture(models.Model):
     culture_name = models.CharField(max_length=35)
+    culture_description = models.TextField()
+    culture_image = models.ImageField(upload_to='culture-images')
+    culture = models.ForeignKey(CultureCategory, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.culture_name
