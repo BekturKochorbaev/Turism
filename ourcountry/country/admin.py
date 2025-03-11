@@ -186,7 +186,6 @@ admin.site.register(Event)
 admin.site.register(UserProfile)
 admin.site.register(CultureCategory)
 admin.site.register(Favorite)
-admin.site.register(FavoriteItem)
 admin.site.register(Region_Categoty)
 admin.site.register(Ticket)
 
@@ -205,7 +204,6 @@ class Currency_DescriptionInlines(TranslationInlineModelAdmin, admin.TabularInli
 class Currency_ImageInlines(admin.TabularInline):
     model = Currency_Image
     extra = 1
-
 
 
 @admin.register(Currency)
@@ -235,3 +233,21 @@ class CultureKitchenMainAdmin(TranslationAdmin):
             'screen': ('modeltranslation/css/tabbed_translation_fields.css',),
         }
 
+
+class AirLineDirectionsInline(TranslationInlineModelAdmin, admin.TabularInline):
+    model = AirLineDirections
+    extra = 1
+
+
+@admin.register(AirLineTickets)
+class AirLineTicketsAdmin(TranslationAdmin):
+    inlines = [AirLineDirectionsInline]
+    class Media:
+        js = (
+            'http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js',
+            'http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js',
+            'modeltranslation/js/tabbed_translation_fields.js',
+        )
+        css = {
+            'screen': ('modeltranslation/css/tabbed_translation_fields.css',),
+        }

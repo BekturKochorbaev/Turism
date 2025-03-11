@@ -91,7 +91,7 @@ class PopularPlaces(models.Model):
     region = models.ForeignKey(Region, on_delete=models.CASCADE, related_name='popular_places')
     longitude = models.CharField(max_length=100, null=True, blank=True, verbose_name='Долгота')
     latitude = models.CharField(max_length=100, null=True, blank=True, verbose_name='Широта') 
-
+    address = models.CharField(max_length=250, null=True, blank=True)
     def __str__(self):
         return f'{self.popular_name}'
 
@@ -167,6 +167,12 @@ class PopularPlaces(models.Model):
         ratings = self.popular_reviews.all()
         if ratings.exists():
             return ratings.count()
+        return 0
+
+    def get_attraction_len(self):
+        len = self.popular_places.all()
+        if len.exists():
+            return len.count()
         return 0
 
 
@@ -248,13 +254,8 @@ class Attractions(models.Model):
 
     @staticmethod
     def get_attractions_by_excellent():
-        # Получаем все объекты Attractions
         attractions = Attractions.objects.all()
-
-        # Сортируем аттракционы по количеству "отличных" оценок в порядке убывания
         sorted_attractions = sorted(attractions, key=lambda attraction: attraction.get_excellent(), reverse=True)
-
-        # Присваиваем каждому аттракциону место (rank) в списке
         for index, attraction in enumerate(sorted_attractions):
             attraction.rank = index + 1
 
@@ -266,6 +267,7 @@ class Attractions(models.Model):
             if attraction == self:
                 return index + 1
         return None
+
 
 class AttractionsImage(models.Model):
     attractions = models.ForeignKey(Attractions, on_delete=models.CASCADE, related_name='image')
@@ -318,7 +320,7 @@ class AttractionsReviewImage(models.Model):
 
 class PopularReview(models.Model):
     client = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
-    popular = models.ForeignKey(PopularPlaces, on_delete=models.CASCADE,  related_name='popular_reviews')
+    popular_place = models.ForeignKey(PopularPlaces, on_delete=models.CASCADE,  related_name='popular_reviews')
     comment = models.TextField()
     rating = models.IntegerField(choices=[(i, str(i)) for i in range(1, 6)], null=True, blank=True, verbose_name='Рейтинг')
     created_date = models.DateField(auto_now_add=True)
@@ -663,13 +665,13 @@ class KitchenImage(models.Model):
 class KitchenReview(models.Model):
     client = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     comment = models.TextField()
-    kitchen_region = models.ForeignKey(Kitchen, on_delete=models.CASCADE, related_name='kitchen_reviews')
+    kitchen = models.ForeignKey(Kitchen, on_delete=models.CASCADE, related_name='kitchen_reviews')
     rating = models.IntegerField(choices=[(i, str(i)) for i in range(1, 6)], null=True, blank=True)
     nutrition_rating = models.IntegerField(choices=[(i, str(i)) for i in range(1, 6)], null=True, blank=True)
     service_rating = models.IntegerField(choices=[(i, str(i)) for i in range(1, 6)], null=True, blank=True)
     price_rating = models.IntegerField(choices=[(i, str(i)) for i in range(1, 6)], null=True, blank=True)
     atmosphere_rating = models.IntegerField(choices=[(i, str(i)) for i in range(1, 6)], null=True, blank=True)
-    created_at = models.DateField(auto_now_add=True)
+    created_date = models.DateField(auto_now_add=True)
 
 
     def __str__(self):
@@ -820,6 +822,7 @@ class GalleryReviewImage(models.Model):
 
 # FOR CULTURE
 
+
 class CultureCategory(models.Model):
     CATEGORIES = (
         ("Games", "Games"),
@@ -928,23 +931,35 @@ class CultureKitchenMain(models.Model):
     image_4 = models.ImageField(upload_to='culture_kitchen_image', null=True, blank=True)
 
 
+class AirLineTickets(models.Model):
+    name = models.CharField(max_length=250)
+    description = models.TextField()
+    website = models.URLField()
+
+    def __str__(self):
+        return str(self.name)
+
+
+class AirLineDirections(models.Model):
+    ticket = models.ForeignKey(AirLineTickets, on_delete=models.CASCADE, related_name='airline_tickets')
+    directions = models.CharField(max_length=250)
+
+
 # FOR FAVORITE
 
 
 class Favorite(models.Model):
-    user = models.OneToOneField(UserProfile, on_delete=models.CASCADE, related_name='favorite')
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    attractions = models.ForeignKey(Attractions, on_delete=models.CASCADE, null=True, blank=True)
+    popular_place = models.ForeignKey(PopularPlaces, on_delete=models.CASCADE, null=True, blank=True)
+    kitchen = models.ForeignKey(Kitchen, on_delete=models.CASCADE, null=True, blank=True)
+    hotels = models.ForeignKey(Hotels, on_delete=models.CASCADE, related_name='favorite_hotel')
+    like = models.BooleanField(default=False)
+    created_date = models.DateField(auto_now_add=True, null=True, blank=True)
 
     def __str__(self):
         return str(self.user)
 
+    class Meta:
+        unique_together = ('user', 'attractions', 'popular_place', 'kitchen', 'hotels')
 
-class FavoriteItem(models.Model):
-    favorite = models.ForeignKey(Favorite, related_name='items', on_delete=models.CASCADE)
-    attractions = models.ForeignKey(Attractions, on_delete=models.CASCADE, null=True, blank=True)
-    popular_region = models.ForeignKey(PopularPlaces, on_delete=models.CASCADE, null=True, blank=True)
-    gallery = models.ForeignKey(Gallery, on_delete=models.CASCADE, null=True, blank=True)
-    kitchen = models.ForeignKey(Kitchen, on_delete=models.CASCADE, null=True, blank=True)
-    hotels = models.ForeignKey(Hotels, on_delete=models.CASCADE, related_name='favorite_hotel')
-
-    def __str__(self):
-        return str(self.favorite)

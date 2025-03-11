@@ -467,27 +467,39 @@ class GalleryReviewListAPIView(generics.ListAPIView):
 class GalleryReviewDetailAPIView(generics.RetrieveAPIView):
     queryset = GalleryReview.objects.all()
     serializer_class = GalleryReviewSerializer
+
+
+class AirLineTicketsAPIView(generics.ListAPIView):
+    queryset = AirLineTickets.objects.all()
+    serializer_class = AirLineTicketsSerializers
+
+
 # NEW-----------
 
 
-class FavoriteItemViewSet(viewsets.ModelViewSet):
-    serializer_class = FavoriteSerializers
+class FavoriteListView(generics.ListAPIView):
+    serializer_class = FavoriteListSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         return Favorite.objects.filter(user=self.request.user)
 
-    def retrieve(self, request, *args, **kwargs):
-        cart, created = Favorite.objects.get_or_create(user=request.user)
-        serializer = self.get_serializer(cart)
-        return Response(serializer.data)
 
-
-class FavoriteItemViewSet(viewsets.ModelViewSet):
-    serializer_class = FavoriteItemSerializers
-
-    def get_queryset(self):
-        return FavoriteItem.objects.filter(favorite__user__id=self.request.user.id)
+class FavoriteCreateView(generics.CreateAPIView):
+    queryset = Favorite.objects.all()
+    serializer_class = FavoriteSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        cart, created = Favorite.objects.get_or_create(user=self.request.user)
-        serializer.save(cart=cart)
+        serializer.save(user=self.request.user)
+
+
+class FavoriteDeleteView(generics.DestroyAPIView):
+    queryset = Favorite.objects.all()
+    serializer_class = FavoriteSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        favorite_id = self.kwargs.get('favorite_id')
+        return Favorite.objects.get(id=favorite_id, user=self.request.user)
+

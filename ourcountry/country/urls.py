@@ -54,6 +54,8 @@ urlpatterns = [
     path('kitchen_review_static/', KitchenReviewStaticAPIView.as_view(), name='kitchen_review_static'),
     path('reply_kitchen_reviews/', ReplyToKitchenReviewView.as_view(), name='reply_kitchen_reviews'),
 
+    path('airline_tickets/', AirLineTicketsAPIView.as_view(), name='airline_tickets'),
+
     path('event/', EventListAPiView.as_view(), name='event'),
     path('only_tickets/', TicketListAPIView.as_view(), name='only_tickets'),
 
@@ -78,10 +80,8 @@ urlpatterns = [
     path('gallery_review_list/<int:pk>/', GalleryReviewDetailAPIView.as_view(), name='gallery_review_detail'),
     path('reply_gallery_reviews/', ReplyToGalleryReviewView.as_view(), name='gallery_review_list'),
 
-    path('favorite/', FavoriteItemViewSet.as_view({'get': 'list'}), name='favorite'),
-
-    path('favorite_item/', FavoriteItemViewSet.as_view({'get': 'list', 'post': 'create'}), name='favorite_item_list'),
-    path('favorite_item/<int:pk>/', FavoriteItemViewSet.as_view({'put': 'update', 'delete': 'destroy'}), name='favorite_item_detail'),
-
+    path('favorites/', FavoriteCreateView.as_view(), name='favorite-create'),
+    path('favorites/<int:favorite_id>/', FavoriteDeleteView.as_view(), name='favorite-delete'),
+    path('favorites/list/', FavoriteListView.as_view(), name='favorite-list'),
 
 ]

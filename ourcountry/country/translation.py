@@ -1,7 +1,7 @@
 from .models import (Region, Home, Attractions, PopularPlaces, ToTry, Hotels, Kitchen,
                      Gallery, Culture, Games, NationalClothes, HandCrafts, Currency, NationalInstruments,
                      CultureKitchen, KitchenLocation, Currency_Description, Amenities, SafetyAndHygiene,
-                     CultureKitchenMain, )
+                     CultureKitchenMain, AirLineTickets, AirLineDirections, )
 from modeltranslation.translator import TranslationOptions, register
 
 
@@ -103,6 +103,17 @@ class SafetyAndHygieneTranslationOptions(TranslationOptions):
 @register(CultureKitchenMain)
 class CultureKitchenMainTranslationOptions(TranslationOptions):
     fields = ('title', 'description')
+
+
+@register(AirLineTickets)
+class AirLineTicketsTranslationOptions(TranslationOptions):
+    fields = ('name', 'description')
+
+
+@register(AirLineDirections)
+class AirLineDirectionsTranslationOptions(TranslationOptions):
+    fields = ('directions',)
+
 
 
 
