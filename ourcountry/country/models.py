@@ -296,6 +296,7 @@ class ReplyToAttractionReview(models.Model):
     review = models.ForeignKey(AttractionReview, on_delete=models.CASCADE, related_name='reply_attraction_reviews')
     comment = models.TextField()
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='client')
+    created_date = models.DateField(auto_now_add=True, null=True, blank=True)
 
 
 class PostAttraction(models.Model):
@@ -327,7 +328,7 @@ class PopularReview(models.Model):
 
 
     def __str__(self):
-        return f'{self.client}-{self.popular}'
+        return f'{self.client}-{self.popular_place}'
 
 
     def count_like(self):
@@ -341,6 +342,7 @@ class ReplyToPopularReview(models.Model):
     review = models.ForeignKey(PopularReview, on_delete=models.CASCADE, related_name='reply_popular_places')
     comment = models.TextField()
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    created_date = models.DateField(auto_now_add=True, null=True, blank=True)
 
 
 class PostPopular(models.Model):
@@ -498,6 +500,7 @@ class ReplyToHotelReview(models.Model):
     review = models.ForeignKey(HotelsReview, on_delete=models.CASCADE, related_name='reply_hotel_reviews')
     comment = models.TextField()
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    created_date = models.DateField(auto_now_add=True, null=True, blank=True)
 
 
 class PostHotel(models.Model):
@@ -688,6 +691,7 @@ class ReplyToKitchenReview(models.Model):
     review = models.ForeignKey(KitchenReview, on_delete=models.CASCADE, related_name='reply_kitchen_reviews')
     comment = models.TextField()
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    created_date = models.DateField(auto_now_add=True, null=True, blank=True)
 
 
 class PostKitchen(models.Model):
@@ -932,6 +936,7 @@ class CultureKitchenMain(models.Model):
 
 
 class AirLineTickets(models.Model):
+    logo = models.FileField(upload_to='airline_logos/', null=True, blank=True)
     name = models.CharField(max_length=250)
     description = models.TextField()
     website = models.URLField()
@@ -953,13 +958,68 @@ class Favorite(models.Model):
     attractions = models.ForeignKey(Attractions, on_delete=models.CASCADE, null=True, blank=True)
     popular_place = models.ForeignKey(PopularPlaces, on_delete=models.CASCADE, null=True, blank=True)
     kitchen = models.ForeignKey(Kitchen, on_delete=models.CASCADE, null=True, blank=True)
-    hotels = models.ForeignKey(Hotels, on_delete=models.CASCADE, related_name='favorite_hotel')
+    hotels = models.ForeignKey(Hotels, on_delete=models.CASCADE, null=True, blank=True)
     like = models.BooleanField(default=False)
     created_date = models.DateField(auto_now_add=True, null=True, blank=True)
 
     def __str__(self):
         return str(self.user)
 
-    class Meta:
-        unique_together = ('user', 'attractions', 'popular_place', 'kitchen', 'hotels')
+    # Полностью удаляем ограничение unique_together и заменяем на отдельную логику в save()
+    def save(self, *args, **kwargs):
+        # Проверка на существование похожей записи перед сохранением
+        if self.attractions:
+            existing = Favorite.objects.filter(
+                user=self.user,
+                attractions=self.attractions,
+                popular_place__isnull=True,
+                kitchen__isnull=True,
+                hotels__isnull=True
+            ).first()
+            if existing and (not self.pk or self.pk != existing.pk):
+                # Запись уже существует, обновляем лайк
+                existing.like = self.like
+                existing.save()
+                return existing
 
+        elif self.popular_place:
+            existing = Favorite.objects.filter(
+                user=self.user,
+                popular_place=self.popular_place,
+                attractions__isnull=True,
+                kitchen__isnull=True,
+                hotels__isnull=True
+            ).first()
+            if existing and (not self.pk or self.pk != existing.pk):
+                existing.like = self.like
+                existing.save()
+                return existing
+
+        elif self.kitchen:
+            existing = Favorite.objects.filter(
+                user=self.user,
+                kitchen=self.kitchen,
+                attractions__isnull=True,
+                popular_place__isnull=True,
+                hotels__isnull=True
+            ).first()
+            if existing and (not self.pk or self.pk != existing.pk):
+                existing.like = self.like
+                existing.save()
+                return existing
+
+        elif self.hotels:
+            existing = Favorite.objects.filter(
+                user=self.user,
+                hotels=self.hotels,
+                attractions__isnull=True,
+                popular_place__isnull=True,
+                kitchen__isnull=True
+            ).first()
+            if existing and (not self.pk or self.pk != existing.pk):
+                existing.like = self.like
+                existing.save()
+                return existing
+
+        # Если мы дошли сюда, значит запись уникальная, сохраняем её
+        return super().save(*args, **kwargs)

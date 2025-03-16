@@ -14,6 +14,7 @@ from rest_framework.response import Response
 from django.db.models import Avg, Case, When, Value, IntegerField
 from rest_framework import permissions
 from rest_framework import filters
+from rest_framework.filters import SearchFilter
 from rest_framework.parsers import MultiPartParser
 from django.contrib.auth.models import AnonymousUser
 from rest_framework.permissions import IsAuthenticated
@@ -94,7 +95,8 @@ class PostAttractionCreateAPIView(APIView):
 class AttractionReviewListAPIView(generics.ListAPIView):
     queryset = AttractionReview.objects.all()
     serializer_class = AttractionReviewListSerializer
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, SearchFilter)
+    search_fields = ['comment']
     filterset_class = AttractionReviewFilter
 
 
@@ -167,7 +169,8 @@ class PopularPlacesDetailAPI(generics.RetrieveAPIView):
 class PopularReviewListAPIView(generics.ListAPIView):
     queryset = PopularReview.objects.all()
     serializer_class = PopularReviewListSerializer
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, SearchFilter)
+    search_fields = ['comment']
     filterset_class = PopularReviewFilter
 
 
@@ -249,7 +252,8 @@ class HotelsDetailAPIView(generics.RetrieveAPIView):
 class HotelsReviewListAPIView(generics.ListAPIView):
     queryset = HotelsReview.objects.all()
     serializer_class = HotelReviewListSerializer
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, SearchFilter)
+    search_fields = ['comment']
     filterset_class = HotelsReviewFilter
 
 
@@ -344,7 +348,8 @@ class KitchenReviewCreateAPIView(generics.CreateAPIView):
 class KitchenReviewListAPIView(generics.ListAPIView):
     queryset = KitchenReview.objects.all()
     serializer_class = KitchenReviewListSerializer
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, SearchFilter)
+    search_fields = ['comment']
     filterset_class = KitchenReviewFilter
 
 
@@ -488,10 +493,32 @@ class FavoriteListView(generics.ListAPIView):
 class FavoriteCreateView(generics.CreateAPIView):
     queryset = Favorite.objects.all()
     serializer_class = FavoriteSerializer
-    permission_classes = [permissions.IsAuthenticated]
+
+    # permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        # Получаем данные из запроса
+        attractions_id = self.request.data.get('attractions')
+        popular_place_id = self.request.data.get('popular_place')
+        kitchen_id = self.request.data.get('kitchen')
+        hotels_id = self.request.data.get('hotels')
+
+        # Получаем объекты моделей, если ID указаны
+        attractions = Attractions.objects.get(pk=attractions_id) if attractions_id else None
+        popular_place = PopularPlaces.objects.get(pk=popular_place_id) if popular_place_id else None
+        kitchen = Kitchen.objects.get(pk=kitchen_id) if kitchen_id else None
+        hotels = Hotels.objects.get(pk=hotels_id) if hotels_id else None
+
+        # Сохраняем с объектами моделей, а не с их ID
+        serializer.save(
+            user=self.request.user,
+            attractions=attractions,
+            popular_place=popular_place,
+            kitchen=kitchen,
+            hotels=hotels
+        )
+
+
 
 
 class FavoriteDeleteView(generics.DestroyAPIView):

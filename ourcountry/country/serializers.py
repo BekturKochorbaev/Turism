@@ -30,7 +30,7 @@ class ReplyToAttractionReviewListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ReplyToAttractionReview
-        fields = ['id', 'user', 'comment']
+        fields = ['id', 'user', 'comment', 'created_date']
 
 
 class AttractionReviewListSerializer(serializers.ModelSerializer):
@@ -279,7 +279,7 @@ class RegionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Region
-        fields = ['id', 'region_name', 'region_image', 'region_description', 'What_to_try', 'popular_places', 'region_category']
+        fields = ['id', 'region_name', 'region_image', 'region_description', 'What_to_try', 'popular_places', 'region_category', 'longitude', 'latitude']
 
 
 class ReplyToPopularPlacesListSerializer(serializers.ModelSerializer):
@@ -287,7 +287,7 @@ class ReplyToPopularPlacesListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ReplyToAttractionReview
-        fields = ['id', 'user', 'comment']
+        fields = ['id', 'user', 'comment', 'created_date']
 
 
 class PopularReviewListSerializer(serializers.ModelSerializer):
@@ -395,7 +395,7 @@ class ReplyToHotelReviewListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ReplyToHotelReview
-        fields = ['id', 'user', 'comment']
+        fields = ['id', 'user', 'comment', 'created_date']
 
 
 class HotelReviewListSerializer(serializers.ModelSerializer):
@@ -433,7 +433,7 @@ class ReplyToHotelReviewSerializer(serializers.ModelSerializer):
 class PostHotelSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostHotel
-        fields = '__all__'                 
+        fields = '__all__'
 
 
 class HotelsReviewImageSerializers(serializers.ModelSerializer):
@@ -566,7 +566,7 @@ class ReplyToKitchenReviewListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ReplyToKitchenReview
-        fields = ['id', 'user', 'comment']
+        fields = ['id', 'user', 'comment', 'created_date']
 
 
 class KitchenReviewListSerializer(serializers.ModelSerializer):
@@ -720,12 +720,22 @@ class TicketsSerializers(serializers.ModelSerializer):
 
 
 class CultureSerializers(serializers.ModelSerializer):
+    culture = serializers.SlugRelatedField(
+        queryset=CultureCategory.objects.all(),
+        slug_field='culture_name'
+
+    )
     class Meta:
         model = Culture
-        fields = ['id', 'culture_name', 'culture_description', 'culture_image']
+        fields = ['id', 'culture_name', 'culture', 'culture_description', 'culture_image']
 
 
 class CultureKitchenMainListSerializers(serializers.ModelSerializer):
+    culture = serializers.SlugRelatedField(
+        queryset=CultureCategory.objects.all(),
+        slug_field='culture_name'
+
+    )
     class Meta:
         model = CultureKitchenMain
         fields = ['id', 'culture', 'title', 'description', 'image_1', 'image_2', 'image_3', 'image_4']
@@ -882,9 +892,20 @@ class AttractionReviewSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+
+class AttractionReviewSimpleSerializer(serializers.ModelSerializer):
+    client = UserProfileSimpleSerializer(read_only=True)
+    attractions = AttractionsListSerializer(read_only=True)
+    attraction_review_image = AttractionsReviewImageSerializers(read_only=True, many=True)
+
+    class Meta:
+        model = AttractionReview
+        fields = '__all__'
+
+
 class PopularReviewSerializer(serializers.ModelSerializer):
     client = UserProfileSimpleSerializer(read_only=True)
-    popular = serializers.SlugRelatedField(
+    popular_place = serializers.SlugRelatedField(
         queryset=PopularPlaces.objects.all(),
         slug_field='popular_name'
     )
@@ -895,11 +916,20 @@ class PopularReviewSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class PopularReviewSimpleSerializer(serializers.ModelSerializer):
+    client = UserProfileSimpleSerializer(read_only=True)
+    popular_place = PopularPlacesListSerializer(read_only=True)
+    review_image = ReviewImageSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = PopularReview
+        fields = '__all__'
+
 
 
 class KitchenReviewSerializer(serializers.ModelSerializer):
     client_kitchen = UserProfileSimpleSerializer(read_only=True)
-    kitchen_region = serializers.SlugRelatedField(
+    kitchen = serializers.SlugRelatedField(
         queryset=Kitchen.objects.all(),
         slug_field='kitchen_name'
     )
@@ -907,6 +937,26 @@ class KitchenReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = KitchenReview
+        fields = '__all__'
+
+
+class KitchenReviewSimpleSerializer(serializers.ModelSerializer):
+    client = UserProfileSimpleSerializer(read_only=True)
+    kitchen = KitchenListSerializer(read_only=True)
+    kitchen_review_image = KitchenReviewImageSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = KitchenReview
+        fields = '__all__'
+
+
+class HotelsReviewSimpleSerializer(serializers.ModelSerializer):
+    client = UserProfileSimpleSerializer(read_only=True)
+    hotel = HotelsListSerializer(read_only=True)
+    hotel_review_image = HotelsReviewImageSerializers(read_only=True, many=True)
+
+    class Meta:
+        model = HotelsReview
         fields = '__all__'
 
 
@@ -948,16 +998,41 @@ class AirLineTicketsSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = AirLineTickets
-        fields = ['id', 'name', 'description', 'website', 'airline_tickets']
+        fields = ['id', 'name', 'description', 'website', 'logo', 'airline_tickets']
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
+    attractions = serializers.PrimaryKeyRelatedField(
+        queryset=Attractions.objects.all(),
+        required=False,
+        allow_null=True,
+        default=None
+    )
+    popular_place = serializers.PrimaryKeyRelatedField(
+        queryset=PopularPlaces.objects.all(),
+        required=False,
+        allow_null=True,
+        default=None
+    )
+    kitchen = serializers.PrimaryKeyRelatedField(
+        queryset=Kitchen.objects.all(),
+        required=False,
+        allow_null=True,
+        default=None
+    )
+    hotels = serializers.PrimaryKeyRelatedField(
+        queryset=Hotels.objects.all(),
+        required=False,
+        allow_null=True,
+        default=None
+    )
+
     class Meta:
         model = Favorite
         fields = [
-            'id', 'user', 'attractions', 'popular_place', 'kitchen', 'hotels', 'like', 'created_date'
+            'id', 'attractions', 'popular_place', 'kitchen', 'hotels', 'like', 'created_date'
         ]
-        read_only_fields = ['user', 'created_date']
+        read_only_fields = ['created_date']
 
     def validate(self, data):
         if not any([
@@ -966,13 +1041,11 @@ class FavoriteSerializer(serializers.ModelSerializer):
             data.get('kitchen'),
             data.get('hotels')
         ]):
-            raise serializers.ValidationError("At least one of attractions, popular_region, gallery, kitchen, or hotels must be provided.")
+            raise serializers.ValidationError(
+                "Хотя бы одно из полей attractions, popular_place, kitchen или hotels должно быть указано."
+            )
         return data
 
-    def create(self, validated_data):
-        user = self.context['request'].user
-        favorite, created = Favorite.objects.get_or_create(user=user, **validated_data)
-        return favorite
 
 
 class FavoriteListSerializer(serializers.ModelSerializer):

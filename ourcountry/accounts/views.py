@@ -154,16 +154,13 @@ class UserCommentsHistoryAPIView(APIView):
             kitchen_review = KitchenReview.objects.filter(client=user)
             gallery_review = GalleryReview.objects.filter(client=user)
 
-            serialized_attraction_review = AttractionReviewSerializer(attraction, many=True).data
-            serialized_popular_review = PopularReviewSerializer(popular_review, many=True).data
-            # serialized_region_review = RegionReviewSerializer(region_review, many=True).data
-            serialized_hotel_review = HotelsReviewSerializer(hotel_review, many=True).data
-            serialized_kitchen_review = KitchenReviewSerializer(kitchen_review, many=True).data
-            serialized_gallery_review = GalleryReviewSerializer(gallery_review, many=True).data
+            serialized_attraction_review = AttractionReviewSimpleSerializer(attraction, many=True).data
+            serialized_popular_review = PopularReviewSimpleSerializer(popular_review, many=True).data
+            serialized_hotel_review = HotelsReviewSimpleSerializer(hotel_review, many=True).data
+            serialized_kitchen_review = KitchenReviewSimpleSerializer(kitchen_review, many=True).data
 
             combined_reviews = list(chain(serialized_attraction_review, serialized_popular_review,
-                                          serialized_hotel_review, serialized_kitchen_review,
-                                          serialized_gallery_review))
+                                          serialized_hotel_review, serialized_kitchen_review))
             return Response(combined_reviews)
 
         except IntegrityError as e:

@@ -70,7 +70,7 @@ class KitchenReviewFilter(filters.FilterSet):
     )
 
     def filter_month(self, queryset, name, value):
-        return queryset.filter(created_at__month=value)
+        return queryset.filter(created_date__month=value)
 
     class Meta:
         model = KitchenReview
