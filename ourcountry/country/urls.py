@@ -1,23 +1,24 @@
-from django.urls import path, include
-from .views import *
-from rest_framework import routers
-
-# FOR CHARLES DEO
-router = routers.DefaultRouter()
-# router.register(r'hotel_review', HotelsReviewViewSet, basename='hotel_review')
+from django.urls import path
+from .views import (
+    UserAPIView, UserProfileListAPIView, HomeListAPIView, RegionListAPIView,
+    AttractionsListAPIView, AttractionsDetailAPIView, AttractionReviewListAPIView,
+    AttractionReviewDetailAPIView, AttractionReviewStaticListApiView,
+    AttractionReviewCreateAPIView, ReplyToAttractionReviewView, PopularPlacesListAPI,
+    PopularPlacesDetailAPI, PopularReviewListAPIView, PopularReviewDetailAPIView,
+    PopularPlacesStaticAPIView, PopularReviewCreateAPIView, ReplyToPopularPlacesCreateView,
+    HotelsListAPIView, HotelsDetailAPIView, HotelsReviewListAPIView,
+    HotelsReviewDetailAPIView, HotelsReviewStaticListAPIView, HotelReviewCreateAPiView,
+    ReplyToHotelReviewView, KitchenListView, KitchenDetailView, KitchenReviewCreateAPIView,
+    KitchenReviewListAPIView, KitchenReviewDetailAPIView, KitchenReviewStaticAPIView,
+    ReplyToKitchenReviewView, AirLineTicketsAPIView, EventListAPiView, TicketListAPIView,
+    CultureListAPiView, GamesViewSet, CultureKitchenViewSet, CultureKitchenMainListViewSet,
+    NationalClothesViewSet, CurrencyViewSet, HandCraftsViewSet, NationalInstrumentsViewSet,
+    FavoriteCreateView, FavoriteDeleteView, FavoriteListView
+)
 
 urlpatterns = [
-    path('', include(router.urls)),
-
     path('user_profile_update/', UserAPIView.as_view(), name='user_profile_create'),
     path('user_profile_list/', UserProfileListAPIView.as_view(), name='user_profile_list'),
-    
-    path('post_like/attraction/', PostAttractionCreateAPIView.as_view(), name='post_attraction_create'),
-    path('post_like/kitchen/', PostKitchenCreateAPIView.as_view(), name='post_kitchen_create'),
-    path('post_like/gallery/', PostGalleryCreateAPIView.as_view(), name='post_gallery_create'),
-    path('post_like/hotel/', PostHotelCreateAPIView.as_view(), name='post_hotel_create'),
-    path('post_like/place/', PostPopularPlacesCreateApiView.as_view(), name='post_hotel_place'),
-
 
     path('home/', HomeListAPIView.as_view(), name='home'),
     path('region/', RegionListAPIView.as_view(), name='region'),
@@ -74,11 +75,6 @@ urlpatterns = [
 
     path('instruments/', NationalInstrumentsViewSet.as_view({'get': "list"}), name='instruments_list'),
 
-    path('gallery/', GalleryListAPIView.as_view(), name='gallery'),
-    path('gallery_review_create/', GalleryReviewCreateAPIView.as_view(), name='gallery_review_create'),
-    path('gallery_review_list/', GalleryReviewListAPIView.as_view(), name='gallery_review_list'),
-    path('gallery_review_list/<int:pk>/', GalleryReviewDetailAPIView.as_view(), name='gallery_review_detail'),
-    path('reply_gallery_reviews/', ReplyToGalleryReviewView.as_view(), name='gallery_review_list'),
 
     path('favorites/', FavoriteCreateView.as_view(), name='favorite-create'),
     path('favorites/<int:favorite_id>/', FavoriteDeleteView.as_view(), name='favorite-delete'),

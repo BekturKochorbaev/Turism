@@ -1,10 +1,9 @@
-from django_filters import rest_framework as filters, CharFilter
+from django_filters import rest_framework as filters
 from datetime import datetime
 from .models import *
 
 
 class PopularReviewFilter(filters.FilterSet):
-    # Фильтр по рейтингу
     rating = filters.ChoiceFilter(choices=[
         (1, '1 звезда'),
         (2, '2 звезды'),
@@ -13,7 +12,6 @@ class PopularReviewFilter(filters.FilterSet):
         (5, '5 звезд'),
     ])
 
-    # Фильтр по месяцам
     month = filters.ChoiceFilter(
         method='filter_month',
         choices=[
@@ -41,7 +39,6 @@ class PopularReviewFilter(filters.FilterSet):
 
 
 class KitchenReviewFilter(filters.FilterSet):
-    # Фильтр по рейтингу
     rating = filters.ChoiceFilter(choices=[
         (1, '1 звезда'),
         (2, '2 звезды'),
@@ -50,7 +47,6 @@ class KitchenReviewFilter(filters.FilterSet):
         (5, '5 звезд'),
     ])
 
-    # Фильтр по месяцам
     month = filters.ChoiceFilter(
         method='filter_month',
         choices=[
@@ -78,7 +74,6 @@ class KitchenReviewFilter(filters.FilterSet):
 
 
 class HotelsReviewFilter(filters.FilterSet):
-    # Фильтр по рейтингу
     rating = filters.ChoiceFilter(choices=[
         (1, '1 звезда'),
         (2, '2 звезды'),
@@ -87,7 +82,6 @@ class HotelsReviewFilter(filters.FilterSet):
         (5, '5 звезд'),
     ])
 
-    # Фильтр по месяцам
     month = filters.ChoiceFilter(
         method='filter_month',
         choices=[
@@ -115,7 +109,6 @@ class HotelsReviewFilter(filters.FilterSet):
 
 
 class AttractionReviewFilter(filters.FilterSet):
-    # Фильтр по рейтингу
     rating = filters.ChoiceFilter(choices=[
         (1, '1 звезда'),
         (2, '2 звезды'),
@@ -124,7 +117,6 @@ class AttractionReviewFilter(filters.FilterSet):
         (5, '5 звезд'),
     ])
 
-    # Фильтр по месяцам
     month = filters.ChoiceFilter(
         method='filter_month',
         choices=[
@@ -152,11 +144,8 @@ class AttractionReviewFilter(filters.FilterSet):
 
 
 class EventFilter(filters.FilterSet):
-    # Используем CharFilter для фильтрации по полю 'category__category' (название категории)
-    category = CharFilter(field_name='category__category', lookup_expr='exact')
+    category = filters.CharFilter(field_name='category__category', lookup_expr='exact')
 
     class Meta:
         model = Event
         fields = ['category', 'date', 'ticket']
-
-

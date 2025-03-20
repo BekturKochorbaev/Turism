@@ -1,5 +1,5 @@
 from .models import (Region, Home, Attractions, PopularPlaces, ToTry, Hotels, Kitchen,
-                     Gallery, Culture, Games, NationalClothes, HandCrafts, Currency, NationalInstruments,
+                     Culture, Games, NationalClothes, HandCrafts, Currency, NationalInstruments,
                      CultureKitchen, KitchenLocation, Currency_Description, Amenities, SafetyAndHygiene,
                      CultureKitchenMain, AirLineTickets, AirLineDirections, )
 from modeltranslation.translator import TranslationOptions, register
@@ -43,11 +43,6 @@ class KitchenTranslationOptions(TranslationOptions):
 @register(KitchenLocation)
 class KitchenLocationTranslationOptions(TranslationOptions):
     fields = ('address',)
-
-
-@register(Gallery)
-class GalleryTranslationOptions(TranslationOptions):
-    fields = ('gallery_name', )
 
 
 @register(Culture)
