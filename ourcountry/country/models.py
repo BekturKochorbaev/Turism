@@ -274,12 +274,6 @@ class AttractionReview(models.Model):
     def __str__(self):
         return f'{self.client}'
 
-    def count_like(self):
-        like = self.post.all()
-        if like.exists():
-            return like.count()
-        return 0
-
 
 class ReplyToAttractionReview(models.Model):
     review = models.ForeignKey(AttractionReview, on_delete=models.CASCADE, related_name='reply_attraction_reviews')
@@ -303,11 +297,6 @@ class PopularReview(models.Model):
     def __str__(self):
         return f'{self.client}-{self.popular_place}'
 
-    def count_like(self):
-        like = self.post_popular.all()
-        if like.exists():
-            return like.count()
-        return 0
 
 
 class ReplyToPopularReview(models.Model):
@@ -361,6 +350,7 @@ class Hotels(models.Model):
     price_long_period = models.PositiveIntegerField('Цена Долгого Периода')
     longitude = models.CharField(max_length=100, null=True, blank=True, verbose_name='Долгота')
     latitude = models.CharField(max_length=100, null=True, blank=True, verbose_name='Широта')
+    contact = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='Контактный номер')
 
     def __str__(self):
         return self.name
@@ -466,13 +456,6 @@ class HotelsReview(models.Model):
     hotel = models.ForeignKey(Hotels, on_delete=models.CASCADE, related_name='hotel_reviews')
     rating = models.IntegerField(choices=[(i, str(i)) for i in range(1, 6)], null=True, blank=True)
     created_date = models.DateField(auto_now_add=True)
-
-    def count_like(self):
-        like = self.post_hotel.all()
-        if like.exists():
-            return like.count()
-        return 0
-
     def __str__(self):
         return f'{self.client}'
 
@@ -538,7 +521,7 @@ class Kitchen(models.Model):
 
     def get_average_rating(self):
         ratings = self.kitchen_reviews.all()
-        valid_ratings = [rating.price_rating for rating in ratings if rating.price_rating is not None]
+        valid_ratings = [rating.rating for rating in ratings if rating.rating is not None]
         if valid_ratings:
             return round(sum(valid_ratings) / len(valid_ratings), 1)
         return 0
@@ -679,12 +662,6 @@ class KitchenReview(models.Model):
 
     def __str__(self):
         return f'{self.client}'
-
-    def count_like(self):
-        like = self.post_kitchen.all()
-        if like.exists():
-            return like.count()
-        return 0
 
 
 class ReplyToKitchenReview(models.Model):

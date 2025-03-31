@@ -1,4 +1,4 @@
-from rest_framework import generics, status
+from rest_framework import generics, status, serializers
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
@@ -13,6 +13,7 @@ from rest_framework.decorators import api_view
 from .serializers import UserSerializer, LoginSerializer, EmptySerializer, VerifyResetCodeSerializer
 from country.serializers import AttractionReviewSimpleSerializer, PopularReviewSimpleSerializer, \
     HotelsReviewSimpleSerializer, KitchenReviewSimpleSerializer
+from country.models import  AttractionReview, PopularReview, HotelsReview, KitchenReview
 from django.core.exceptions import ValidationError
 from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework.serializers import ValidationError as SerializerValidationError
@@ -84,11 +85,34 @@ class CustomLoginView(TokenObtainPairView):
                 'refresh': str(refresh),
             }
             return Response(response_data, status=status.HTTP_200_OK)
-        except ValidationError:
-            return Response({'detail': "Неверные учетные данные"}, status=status.HTTP_401_UNAUTHORIZED)
+        except serializers.ValidationError as e:
+            # Проверяем сообщение об ошибке и возвращаем нужный ответ
+            error_detail = e.detail[0] if isinstance(e.detail, list) else e.detail
+            if error_detail == 'Пользователь не найден':
+                return Response(
+                    {'detail': 'Пользователь не найден'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            elif error_detail == 'Неверный пароль':
+                return Response(
+                    {'detail': 'Неверный пароль'},
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
+            elif error_detail == 'Пользователь неактивен':
+                return Response(
+                    {'detail': 'Пользователь неактивен'},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+            else:
+                return Response(
+                    {'detail': 'Неверные учетные данные'},
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
         except Exception as e:
-            return Response({"detail": f"Сервер не работает, {e}"}, status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+            return Response(
+                {"detail": f"Сервер не работает, {e}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 class LogoutView(generics.GenericAPIView):
     serializer_class = EmptySerializer

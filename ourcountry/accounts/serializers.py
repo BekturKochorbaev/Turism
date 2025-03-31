@@ -69,6 +69,7 @@ class UserSerializer(serializers.ModelSerializer):
             'refresh': str(refresh),
         }
 
+
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
@@ -96,6 +97,13 @@ class LoginSerializer(serializers.Serializer):
         except UserProfile.DoesNotExist:
             raise serializers.ValidationError('Пользователь не найден')
 
+    def to_representation(self, instance):
+        user = instance['user']
+        refresh = RefreshToken.for_user(user)
+        return {
+            'access': str(refresh.access_token),
+            'refresh': str(refresh)
+        }
     def to_representation(self, instance):
         user = instance['user']
         refresh = RefreshToken.for_user(user)

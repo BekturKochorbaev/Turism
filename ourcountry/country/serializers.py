@@ -41,16 +41,12 @@ class ReplyToAttractionReviewListSerializer(serializers.ModelSerializer):
 class AttractionReviewListSerializer(serializers.ModelSerializer):
     client = UserProfileSimpleSerializer(read_only=True)
     attraction_review_image = AttractionsReviewImageSerializers(read_only=True, many=True)
-    count_like = serializers.SerializerMethodField()
     reply_attraction_reviews = ReplyToAttractionReviewListSerializer(read_only=True, many=True)
 
     class Meta:
         model = AttractionReview
         fields = ['id', 'client', 'attractions', 'comment', 'attraction_review_image', 'rating', 'created_date',
-                  'count_like', 'reply_attraction_reviews']
-
-    def count_like(self, obj):
-        return obj.count_like()
+                  'reply_attraction_reviews']
 
 
 class AttractionReviewStaticSerializers(serializers.ModelSerializer):
@@ -272,16 +268,12 @@ class ReplyToPopularPlacesListSerializer(serializers.ModelSerializer):
 class PopularReviewListSerializer(serializers.ModelSerializer):
     client = UserProfileSimpleSerializer(read_only=True)
     review_image = ReviewImageSerializer(read_only=True, many=True)
-    count_like = serializers.SerializerMethodField()
     reply_popular_places = ReplyToPopularPlacesListSerializer(read_only=True, many=True)
 
     class Meta:
         model = PopularReview
-        fields = ['id', 'client', 'comment', 'popular_place', 'review_image', 'count_like', 'created_date', 'rating',
+        fields = ['id', 'client', 'comment', 'popular_place', 'review_image', 'created_date', 'rating',
                   'reply_popular_places']
-
-    def count_like(self, obj):
-        return obj.count_like()
 
 
 class PopularReviewCreateSerializer(serializers.ModelSerializer):
@@ -364,15 +356,11 @@ class ReplyToHotelReviewListSerializer(serializers.ModelSerializer):
 class HotelReviewListSerializer(serializers.ModelSerializer):
     client = UserProfileSimpleSerializer(read_only=True)
     hotel_review_image = HotelImageSerializers(read_only=True, many=True)
-    count_like = serializers.SerializerMethodField()
     reply_hotel_reviews = ReplyToHotelReviewListSerializer(read_only=True, many=True)
 
     class Meta:
         model = HotelsReview
-        fields = ['id', 'client', 'hotel', 'comment', 'hotel_review_image', 'rating', 'created_date', 'count_like', 'reply_hotel_reviews']
-
-    def count_like(self, obj):
-        return obj.count_like()
+        fields = ['id', 'client', 'hotel', 'comment', 'hotel_review_image', 'rating', 'created_date', 'reply_hotel_reviews']
 
 
 class HotelDetailSerializer(serializers.ModelSerializer):
@@ -384,7 +372,8 @@ class HotelDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hotels
         fields = ['id', 'name', 'hotel_image', 'address', 'description', 'bedroom', 'bathroom', 'cars', 'bikes',
-                  'pets', 'amenities', 'safety_and_hygiene', 'price_short_period', 'price_medium_period', 'price_long_period', 'hotel_reviews']
+                  'pets', 'amenities', 'safety_and_hygiene', 'price_short_period', 'price_medium_period',
+                  'price_long_period', 'contact', 'hotel_reviews']
 
 
 class ReplyToHotelReviewSerializer(serializers.ModelSerializer):
@@ -520,16 +509,12 @@ class ReplyToKitchenReviewListSerializer(serializers.ModelSerializer):
 class KitchenReviewListSerializer(serializers.ModelSerializer):
     client = UserProfileSimpleSerializer(read_only=True)
     kitchen_review_image = KitchenReviewImageSerializer(read_only=True, many=True)
-    count_like = serializers.SerializerMethodField()
     reply_kitchen_reviews = ReplyToKitchenReviewListSerializer(read_only=True, many=True)
 
     class Meta:
         model = KitchenReview
         fields = ['id', 'client', 'kitchen', 'comment', 'rating',
-                  'created_date', 'kitchen_review_image', 'count_like', 'reply_kitchen_reviews']
-
-    def count_like(self, obj):
-        return obj.count_like()
+                  'created_date', 'kitchen_review_image', 'reply_kitchen_reviews']
 
 
 class KitchenDetailSerializers(serializers.ModelSerializer):

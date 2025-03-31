@@ -7,7 +7,7 @@ from .models import (
     NationalInstruments, CultureKitchenImage, CultureKitchen, Attractions, AttractionsImage, HotelsImage, Amenities,
     SafetyAndHygiene, Hotels, KitchenLocation, KitchenImage, Kitchen, EventCategories, Event, CultureCategory,
     Region_Categoty, Ticket, Currency_Description, Currency_Image, Currency, CultureKitchenMain,
-    AirLineDirections, AirLineTickets
+    AirLineDirections, AirLineTickets, KitchenReview
 )
 
 
@@ -185,3 +185,5 @@ class AirLineTicketsAdmin(TranslationAdmin):
         css = {
             'screen': ('modeltranslation/css/tabbed_translation_fields.css',),
         }
+
+admin.site.register(KitchenReview)
