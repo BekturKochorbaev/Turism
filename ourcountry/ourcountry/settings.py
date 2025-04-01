@@ -9,7 +9,19 @@ load_dotenv()
 SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    '13.53.193.236',
+    'sitetrevel.online',
+    'api.sitetrevel.online',
+    'localhost',
+    '127.0.0.1',
+    '0.0.0.0',
+
+]
+
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 
 INSTALLED_APPS = [
     'jazzmin',
@@ -90,15 +102,17 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-USE_X_FORWARDED_HOST = True
-
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    'https://cute-jalebi-1777db.netlify.app/',
+    'https://api.sitetrevel.online',
+    'https://sitetrevel.online',
+
 ]
+
 CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
 
 CKEDITOR_CONFIGS = {
