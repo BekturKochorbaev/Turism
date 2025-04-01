@@ -5,7 +5,7 @@ services:
       bash -c "./manage.py collectstatic --noinput && ./manage.py makemigrations && ./manage.py migrate && gunicorn -b 0.0.0.0:8000 ourcountry.wsgi:application"
     volumes:
       - .:/app
-      - /home/ubuntu/Turism2/staticfiles:/app/static
+      - /home/ubuntu/Turism/staticfiles:/app/static
       - media_volume:/app/media
     ports:
       - "8000:8000"
@@ -35,10 +35,10 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - /home/ubuntu/Turism2/ourcountry/staticfiles:/app/static
+      - /home/ubuntu/Turism/ourcountry/staticfiles:/app/static
       - media_volume:/app/media
-      - /home/ubuntu/Turism2/letsencrypt:/etc/letsencrypt
-      - /home/ubuntu/Turism2/letsencrypt/www:/var/www/html
+      - /home/ubuntu/Turism/letsencrypt:/etc/letsencrypt
+      - /home/ubuntu/Turism/letsencrypt/www:/var/www/html
     depends_on:
       - web
     environment:
@@ -49,8 +49,8 @@ services:
   certbot:
     image: certbot/certbot
     volumes:
-      - /home/ubuntu/Turism2/letsencrypt:/etc/letsencrypt
-      - /home/ubuntu/Turism2/letsencrypt/www:/var/www/html
+      - /home/ubuntu/Turism/letsencrypt:/etc/letsencrypt
+      - /home/ubuntu/Turism/letsencrypt/www:/var/www/html
     environment:
       - URL=sitetrevel.online
       - SUBDOMAINS=api

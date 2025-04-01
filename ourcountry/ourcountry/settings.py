@@ -107,7 +107,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    'https://cute-jalebi-1777db.netlify.app/',
+    'https://cute-jalebi-1777db.netlify.app',
     'https://api.sitetrevel.online',
     'https://sitetrevel.online',
 
